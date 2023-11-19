@@ -1,10 +1,12 @@
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JFrame;
+
+import java.util.Iterator;
+import java.util.List;
 
 import vectors_custom.Vector2D;
 
@@ -12,7 +14,7 @@ public class Simulation extends JFrame implements KeyListener{
     public static final double length = 100;
     public static final double width = 100;
     private int populationSize;
-    private AtomicInteger step;
+    private int step;
 
     private ArrayList<Person> population;
     private ArrayList<InfectionProgress> spreadProgressList;
@@ -21,8 +23,7 @@ public class Simulation extends JFrame implements KeyListener{
     private final double income = 0.9;
 
     //działanie symulacji
-    //synchronizacja między wątkami
-    private volatile boolean simulationRunning = false;
+    private boolean simulationRunning = false;
 
     //saving
     private String content;
@@ -38,7 +39,7 @@ public class Simulation extends JFrame implements KeyListener{
         setVisible(true);
 
         this.populationSize = populationSize;
-        this.step = new AtomicInteger(0);
+        this.step = 0;
 
         this.population = new ArrayList<Person>();
         this.spreadProgressList = new ArrayList<InfectionProgress>();
@@ -54,24 +55,16 @@ public class Simulation extends JFrame implements KeyListener{
     }
 
     public Integer getCurrentStep() {
-        return this.step.get();
+        return this.step;
     }
 
     public void startSimulation() {
         simulationRunning = true;
-        // Tworzenie i start wątku
-        Thread simulationThread = new Thread(() -> {
-            while (simulationRunning) {
-                update();
-                repaint(); // Potrzebne, jeśli korzystasz z rysowania na ekranie
-                try {
-                    Thread.sleep(100); // Odczekaj 100 milisekund przed kolejnym krokiem symulacji
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        simulationThread.start();
+        
+        while (simulationRunning) {
+            update();
+            repaint(); // Potrzebne, jeśli korzystasz z rysowania na ekranie
+        }
     }
  
     //krok symulacji
@@ -81,23 +74,29 @@ public class Simulation extends JFrame implements KeyListener{
         spreadDisease();
         updateRecoveryProgress(); 
         //wykonanie kroku
-        this.step.addAndGet(1); 
+        this.step += 1;
     }
 
     //ruch jednostek Person
-    private void movement() {
-    java.util.Iterator<Person> iterator = this.population.iterator();
+private void movement() {
+    Iterator<Person> iterator = this.population.iterator();
+    List<Person> newPersons = new ArrayList<>();
+
     while (iterator.hasNext()) {
         Person person = iterator.next();
-        //opuszczenie obszaru symulacji
+        // opuszczenie obszaru symulacji
         if (person.move()) {
             iterator.remove();
         }
-        //przyrost populacji
-        if (growPopulation()) {
-            this.population.add(new Person());
-        }
+
     }
+    // przyrost populacji
+    if (growPopulation()) {
+        newPersons.add(new Person());
+    }
+
+    // Add the new persons after the iteration
+    this.population.addAll(newPersons);
 }
 
     //sprawdzanie warunków zarażenia
