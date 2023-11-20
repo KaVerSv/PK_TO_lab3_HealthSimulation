@@ -108,7 +108,7 @@ public class Person {
         this.location.add(change);
         
         double[] tmp = this.location.getComponents(); 
-        if (tmp[0] > Simulation.width || tmp[0] < Simulation.width || tmp[1] > Simulation.length || tmp[1] < Simulation.length) {
+        if (tmp[0] > Simulation.width || tmp[0] < 0 || tmp[1] > Simulation.length || tmp[1] < 0) {
             if (this.rand.nextBoolean()) {
                 this.location = new Vector2D(save[0], save[1]);
                 return false;

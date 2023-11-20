@@ -1,19 +1,19 @@
 import java.util.ArrayList;
 import java.util.Random;
+import java.awt.Color;
+import java.awt.Graphics;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import javax.swing.JFrame;
+
+import javax.swing.*;
 
 import java.util.Iterator;
 import java.util.List;
 
 import vectors_custom.Vector2D;
 
-public class Simulation extends JFrame implements KeyListener{
+public class Simulation extends JFrame{
     public static final double length = 100;
     public static final double width = 100;
-    private int populationSize;
     private int step;
 
     private ArrayList<Person> population;
@@ -29,25 +29,16 @@ public class Simulation extends JFrame implements KeyListener{
     private String content;
 
     public Simulation(int populationSize, boolean immune) {
-        // Inicjalizacja okna, dodanie KeyListener
-        addKeyListener(this);
-        setFocusable(true);
-        setFocusTraversalKeysEnabled(false);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 300);
-        setLocationRelativeTo(null);
-        setVisible(true);
 
-        this.populationSize = populationSize;
+        SimulationPanel panel = new SimulationPanel();
+        add(panel);
+
         this.step = 0;
-
         this.population = new ArrayList<Person>();
         this.spreadProgressList = new ArrayList<InfectionProgress>();
-        
-
         this.random = new Random();
 
-        for (int i = 0; i < this.populationSize; i++) {
+        for (int i = 0; i < populationSize; i++) {
             double x = random.nextDouble(width + 1);
             double y = random.nextDouble(length + 1);
             population.add(new Person(immune, new Vector2D(x, y)));
@@ -58,46 +49,59 @@ public class Simulation extends JFrame implements KeyListener{
         return this.step;
     }
 
+    public void stopSimulation() {
+        this.simulationRunning = !this.simulationRunning;
+    }
+
     public void startSimulation() {
-        simulationRunning = true;
+        this.simulationRunning = true;
         
-        while (simulationRunning) {
+        while (this.step < 100) {
             update();
             repaint(); // Potrzebne, jeśli korzystasz z rysowania na ekranie
+            //this.simulationRunning = false;
+            System.out.println(this.step);
         }
     }
  
     //krok symulacji
     private void update() {
-      
+        long startTime = System.currentTimeMillis();
+    
         movement();
         spreadDisease();
         updateRecoveryProgress(); 
-        //wykonanie kroku
+    
+        // Wykonanie kroku
         this.step += 1;
+    
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        long sleepTime = Math.max(0, 40 - elapsedTime); // 1000 ms / 25 fps = 40 ms
+    
+        try {
+            Thread.sleep(sleepTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     //ruch jednostek Person
-private void movement() {
-    Iterator<Person> iterator = this.population.iterator();
-    List<Person> newPersons = new ArrayList<>();
+    private void movement() {
+        Iterator<Person> iterator = this.population.iterator();
 
-    while (iterator.hasNext()) {
-        Person person = iterator.next();
-        // opuszczenie obszaru symulacji
-        if (person.move()) {
-            iterator.remove();
+        while (iterator.hasNext()) {
+            Person person = iterator.next();
+            // opuszczenie obszaru symulacji
+            if (person.move()) {
+                iterator.remove();
+            }
         }
 
+        // przyrost populacji
+        if (growPopulation()) {
+            this.population.add(new Person());
+        }
     }
-    // przyrost populacji
-    if (growPopulation()) {
-        newPersons.add(new Person());
-    }
-
-    // Add the new persons after the iteration
-    this.population.addAll(newPersons);
-}
 
     //sprawdzanie warunków zarażenia
     private void spreadDisease() {
@@ -109,8 +113,8 @@ private void movement() {
         }
 
         for (int i = 0; i < InfectedList.getInstance().getInfectedList().size(); i++) {
-            for (int j = 0; j < this.populationSize; j++) {
-                if (this.population.get(j).getHealth().isInfected() && InfectedList.getInstance().getInfectedList().get(i).getLocation().spreadPossible(this.population.get(j).getLocation())) {
+            for (int j = 0; j < this.population.size(); j++) {
+                if (j < population.size() && this.population.get(j).getHealth().isInfected() && InfectedList.getInstance().getInfectedList().get(i).getLocation().spreadPossible(this.population.get(j).getLocation())) {
                     this.spreadProgressList.add(new InfectionProgress(InfectedList.getInstance().getInfectedList().get(i), this.population.get(j)));
                 }
             }
@@ -133,7 +137,6 @@ private void movement() {
         return range < income;
     }
 
-
     //zapis
     public void write(String content) {
         this.content = content;
@@ -151,22 +154,25 @@ private void movement() {
         return content;
     }
 
-    //obsługa przycisków
-    @Override
-    public void keyTyped(KeyEvent e) {
-        // Niepotrzebne implementacje KeyListener, ale wymagane zgodnie z interfejsem
+    //wykres
+    public SimulationPanel getSimulationPanel() {
+        return new SimulationPanel();
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        // Jeśli naciśniesz klawisz P, zmień stan symulacji
-        if (e.getKeyCode() == KeyEvent.VK_P) {
-            simulationRunning = !simulationRunning;
+    private class SimulationPanel extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+    
+            List<Person> currentPopulation = new ArrayList<>(population);
+    
+            for (Person person : currentPopulation) {
+                int x = (int) person.getLocation().getComponents()[0];
+                int y = (int) person.getLocation().getComponents()[1];
+    
+                g.setColor(person.getHealth().isInfected() ? Color.red : Color.blue);
+                g.fillOval(x, y, 5, 5); // Kropka reprezentująca osobę
+            }
         }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        // Niepotrzebne implementacje KeyListener, ale wymagane zgodnie z interfejsem
     }
 }
