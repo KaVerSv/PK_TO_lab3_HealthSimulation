@@ -20,6 +20,11 @@ public class Vector2D implements IVector{
         return tmp;
     }
 
+    public void setComponents(double x, double y) {
+        this.x = x;
+        this.y= y;
+    }
+
     public double abs() {
         double abs = Math.sqrt(this.x*this.x + this.y*this.y);
         return abs;
@@ -44,5 +49,4 @@ public class Vector2D implements IVector{
         // Sprawdzamy, czy odległość jest mniejsza lub równa ustalonej wartości progowej
         return distance <= 3.0;
     }
-
 }

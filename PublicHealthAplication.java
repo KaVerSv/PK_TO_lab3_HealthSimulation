@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 public class PublicHealthAplication {
     public static void main(String[] args) {
         
-        int population = 10;
+        int population = 50;
         boolean immune = false;
         InfectedList.getInstance();
         Simulation symulacja = new Simulation(population, immune);
@@ -37,7 +37,7 @@ public class PublicHealthAplication {
         frame.add(toolBar, BorderLayout.NORTH);
 
         // Dodajemy panel symulacji bezpośrednio do zawartości panelu głównego
-        frame.getContentPane().add(symulacja.getSimulationPanel());
+        frame.getContentPane().add(symulacja);
          
         startButton.addActionListener(new ActionListener() {
             @Override

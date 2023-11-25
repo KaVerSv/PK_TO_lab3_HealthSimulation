@@ -3,7 +3,6 @@ import java.util.Random;
 import java.awt.Color;
 import java.awt.Graphics;
 
-
 import javax.swing.*;
 
 import java.util.Iterator;
@@ -11,16 +10,17 @@ import java.util.List;
 
 import vectors_custom.Vector2D;
 
-public class Simulation extends JFrame{
-    public static final double length = 100;
-    public static final double width = 100;
+public class Simulation extends JPanel{
+    public static final double length = 10;
+    public static final double width = 10;
     private int step;
 
-    private ArrayList<Person> population;
-    private ArrayList<InfectionProgress> spreadProgressList;
+    private List<Person> population;
+    private List<InfectionProgress> spreadProgressList;
 
     private Random random;
-    private final double income = 0.9;
+    //szansa na przyrost populacji
+    private final double income = 10;
 
     //działanie symulacji
     private boolean simulationRunning = false;
@@ -29,9 +29,6 @@ public class Simulation extends JFrame{
     private String content;
 
     public Simulation(int populationSize, boolean immune) {
-
-        SimulationPanel panel = new SimulationPanel();
-        add(panel);
 
         this.step = 0;
         this.population = new ArrayList<Person>();
@@ -43,6 +40,8 @@ public class Simulation extends JFrame{
             double y = random.nextDouble(length + 1);
             population.add(new Person(immune, new Vector2D(x, y)));
         }
+
+        
     }
 
     public Integer getCurrentStep() {
@@ -56,16 +55,15 @@ public class Simulation extends JFrame{
     public void startSimulation() {
         this.simulationRunning = true;
         
-        while (this.step < 100) {
-            update();
-            repaint(); // Potrzebne, jeśli korzystasz z rysowania na ekranie
-            //this.simulationRunning = false;
-            System.out.println(this.step);
+        while (this.step < 500 && this.simulationRunning) {
+            NextStep();
+            update(getGraphics());
+            //repaint();
         }
     }
- 
+
     //krok symulacji
-    private void update() {
+    private void NextStep() {
         long startTime = System.currentTimeMillis();
     
         movement();
@@ -97,10 +95,12 @@ public class Simulation extends JFrame{
             }
         }
 
+        /* 
         // przyrost populacji
         if (growPopulation()) {
             this.population.add(new Person());
         }
+        */
     }
 
     //sprawdzanie warunków zarażenia
@@ -132,7 +132,7 @@ public class Simulation extends JFrame{
     private boolean growPopulation() {
         this.random = new Random();
         //zakres od 0 do 100
-        double range = this.random.nextDouble() * 100;
+        int range = this.random.nextInt() * 100;
 
         return range < income;
     }
@@ -154,25 +154,16 @@ public class Simulation extends JFrame{
         return content;
     }
 
-    //wykres
-    public SimulationPanel getSimulationPanel() {
-        return new SimulationPanel();
-    }
-
-    private class SimulationPanel extends JPanel {
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-    
-            List<Person> currentPopulation = new ArrayList<>(population);
-    
-            for (Person person : currentPopulation) {
-                int x = (int) person.getLocation().getComponents()[0];
-                int y = (int) person.getLocation().getComponents()[1];
-    
-                g.setColor(person.getHealth().isInfected() ? Color.red : Color.blue);
-                g.fillOval(x, y, 5, 5); // Kropka reprezentująca osobę
-            }
+    private static final int SCALE_FACTOR = 50;  // Współczynnik skalowania
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        List<Person> currentPopulation = new ArrayList<>(population);
+        for (Person person : currentPopulation) {
+            int x = (int) (person.getLocation().getComponents()[0] * SCALE_FACTOR);
+            int y = (int) (person.getLocation().getComponents()[1] * SCALE_FACTOR);
+            g.setColor(person.getHealth().isInfected() ? Color.red : Color.blue);
+            g.fillOval(x, y, 5, 5); // Kropka reprezentująca osobę
         }
     }
 }

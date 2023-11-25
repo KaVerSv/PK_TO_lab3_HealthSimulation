@@ -4,6 +4,7 @@ import vectors_custom.*;
 public class Person {
     private Health health;
     private Random rand;
+    private Vector2D direction;
     
     private Vector2D location;
 
@@ -11,6 +12,9 @@ public class Person {
         this.health = new NotInfected(immune);
         this.rand = new Random();
         this.location = location;
+        double x = rand.nextDouble() * 0.2 -0.1;
+        double y = rand.nextDouble() * 0.2 -0.1;
+        this.direction = new Vector2D(x,y);
     }
 
     public Vector2D getLocation() {
@@ -97,20 +101,26 @@ public class Person {
 
     // on true Person leaves Simulation area
     public Boolean move() {
-        //max 2,5 m/s w 25 krokach == 0.1 na krok
-        double maksymalnePrzesuniecie = 0.1;
 
-        double x = (this.rand.nextDouble() * 2 - 1) * maksymalnePrzesuniecie;
-        double y = (this.rand.nextDouble() * 2 - 1) * maksymalnePrzesuniecie;
-
-        double[] save = this.location.getComponents();
-        IVector change = new Vector2D(x, y);
-        this.location.add(change);
         
+        //max przesuniecie na klatkę = 0.1
+        // szana na zmianę kierunku
+        if (this.rand.nextDouble() < 0.08) {
+            double x = rand.nextDouble() * 0.2 -0.1;
+            double y = rand.nextDouble() * 0.2 -0.1;
+            this.direction = new Vector2D(x,y);
+        }
+        double[] save = this.location.getComponents();
+        this.location.add(this.direction);
         double[] tmp = this.location.getComponents(); 
+        
         if (tmp[0] > Simulation.width || tmp[0] < 0 || tmp[1] > Simulation.length || tmp[1] < 0) {
+            
             if (this.rand.nextBoolean()) {
-                this.location = new Vector2D(save[0], save[1]);
+                this.location.setComponents(save[0], save[1]);
+                double[] tmp2 = this.direction.getComponents();
+                this.direction.setComponents(-tmp2[0], -tmp2[1]);
+
                 return false;
             } else {
                 return true;
