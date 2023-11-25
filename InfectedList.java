@@ -4,6 +4,7 @@ public class InfectedList {
     // Prywatne pole przechowujące jedyną instancję klasy
     private static InfectedList instance;
 
+    //lista wszystkich zarażonych
     private ArrayList<Person> infected;
 
     private InfectedList() {

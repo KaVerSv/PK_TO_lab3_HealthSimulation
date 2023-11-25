@@ -51,13 +51,13 @@ public class Person {
             }
         }
         this.location = new Vector2D(x, y);
+        x = rand.nextDouble() * 0.2 -0.1;
+        y = rand.nextDouble() * 0.2 -0.1;
+        this.direction = new Vector2D(x,y);
     }
 
     private boolean getInfection() {
-        this.rand = new Random();
-        //liczba od 0 do 100
         double range = this.rand.nextDouble() * 100;
-
         return range < 10;
     }
 
@@ -128,4 +128,6 @@ public class Person {
         }
         return false;
     }
+
+    
 }

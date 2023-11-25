@@ -9,15 +9,19 @@ import java.awt.event.ActionListener;
 public class PublicHealthAplication {
     public static void main(String[] args) {
         
+        //parametry symulacji
         int population = 50;
         boolean immune = false;
         InfectedList.getInstance();
         Simulation symulacja = new Simulation(population, immune);
 
+        //
+        //parametry gui
+        //
         JFrame frame = new JFrame("PublicHealthAplication");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Tworzymy pasek narzędziowy
+        
+        //pasek narzedzi
         JToolBar toolBar = new JToolBar();
         
         // Przyciski na pasku narzędziowym
@@ -35,10 +39,15 @@ public class PublicHealthAplication {
 
         // Dodajemy pasek narzędziowy do górnej części okna
         frame.add(toolBar, BorderLayout.NORTH);
+        frame.pack();
 
         // Dodajemy panel symulacji bezpośrednio do zawartości panelu głównego
-        frame.getContentPane().add(symulacja);
-         
+        //frame.getContentPane().add(symulacja);
+        frame.add(symulacja);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        
+        
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -52,8 +61,8 @@ public class PublicHealthAplication {
                 symulacja.stopSimulation();
             }
         });
+        
 
-        frame.setSize(800, 600);
         frame.setVisible(true);
     }
 }

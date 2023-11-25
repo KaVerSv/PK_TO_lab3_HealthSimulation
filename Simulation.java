@@ -1,7 +1,10 @@
 import java.util.ArrayList;
 import java.util.Random;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -10,10 +13,12 @@ import java.util.List;
 
 import vectors_custom.Vector2D;
 
-public class Simulation extends JPanel{
-    public static final double length = 10;
-    public static final double width = 10;
-    private int step;
+public class Simulation extends JPanel implements ActionListener{
+    public static final int length = 10;
+    public static final int width = 10;
+    private static final int SCALE_FACTOR = 50;  // Współczynnik skalowania
+    private static int step = 0;
+    Timer timer;
 
     private List<Person> population;
     private List<InfectionProgress> spreadProgressList;
@@ -28,12 +33,15 @@ public class Simulation extends JPanel{
     //saving
     private String content;
 
-    public Simulation(int populationSize, boolean immune) {
+    //symulacja.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
+    //solving flickering
+    //Graphics bufferGraphics;
 
-        this.step = 0;
+    Simulation(int populationSize, boolean immune) {
         this.population = new ArrayList<Person>();
         this.spreadProgressList = new ArrayList<InfectionProgress>();
         this.random = new Random();
+        this.timer = new Timer(40, this);
 
         for (int i = 0; i < populationSize; i++) {
             double x = random.nextDouble(width + 1);
@@ -41,46 +49,39 @@ public class Simulation extends JPanel{
             population.add(new Person(immune, new Vector2D(x, y)));
         }
 
-        
+        this.setPreferredSize(new Dimension(length * SCALE_FACTOR, width * SCALE_FACTOR));
     }
 
-    public Integer getCurrentStep() {
-        return this.step;
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        NextStep();
+        //update(getGraphics());
+        //validate();
+        repaint();
+    }
+
+    public int getCurrentStep() {
+        return step;
     }
 
     public void stopSimulation() {
         this.simulationRunning = !this.simulationRunning;
+        this.timer.stop();
     }
 
     public void startSimulation() {
+        this.timer.start();
         this.simulationRunning = true;
-        
-        while (this.step < 500 && this.simulationRunning) {
-            NextStep();
-            update(getGraphics());
-            //repaint();
-        }
     }
 
     //krok symulacji
-    private void NextStep() {
-        long startTime = System.currentTimeMillis();
-    
+    private void NextStep() {    
         movement();
         spreadDisease();
         updateRecoveryProgress(); 
     
         // Wykonanie kroku
-        this.step += 1;
-    
-        long elapsedTime = System.currentTimeMillis() - startTime;
-        long sleepTime = Math.max(0, 40 - elapsedTime); // 1000 ms / 25 fps = 40 ms
-    
-        try {
-            Thread.sleep(sleepTime);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        step += 1;
     }
 
     //ruch jednostek Person
@@ -95,12 +96,10 @@ public class Simulation extends JPanel{
             }
         }
 
-        /* 
         // przyrost populacji
         if (growPopulation()) {
             this.population.add(new Person());
         }
-        */
     }
 
     //sprawdzanie warunków zarażenia
@@ -130,10 +129,7 @@ public class Simulation extends JPanel{
 
     //przyrost populacji
     private boolean growPopulation() {
-        this.random = new Random();
-        //zakres od 0 do 100
         int range = this.random.nextInt() * 100;
-
         return range < income;
     }
 
@@ -153,17 +149,21 @@ public class Simulation extends JPanel{
     public String getContent() {
         return content;
     }
+    
+    //grafika
+    public void update(Graphics g) {
+        paint(g); 
+    }
 
-    private static final int SCALE_FACTOR = 50;  // Współczynnik skalowania
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public void paint(Graphics g) {
+        super.paint(g);
         List<Person> currentPopulation = new ArrayList<>(population);
         for (Person person : currentPopulation) {
             int x = (int) (person.getLocation().getComponents()[0] * SCALE_FACTOR);
             int y = (int) (person.getLocation().getComponents()[1] * SCALE_FACTOR);
             g.setColor(person.getHealth().isInfected() ? Color.red : Color.blue);
-            g.fillOval(x, y, 5, 5); // Kropka reprezentująca osobę
+            g.fillOval(x, y, 8, 8); // Kropka reprezentująca osobę
         }
     }
 }
