@@ -25,4 +25,12 @@ public class InfectionProgress {
             return false;
         }
     }
+
+    public Person getHealthy() {
+        return healthy;
+    }
+
+    public Person getInfected() {
+        return infected;
+    }
 }

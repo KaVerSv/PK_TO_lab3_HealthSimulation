@@ -21,7 +21,7 @@ public class Simulation extends JPanel implements ActionListener{
     Timer timer;
 
     private List<Person> population;
-    private List<InfectionProgress> spreadProgressList;
+    
 
     private Random random;
     //szansa na przyrost populacji
@@ -39,7 +39,6 @@ public class Simulation extends JPanel implements ActionListener{
 
     Simulation(int populationSize, boolean immune) {
         this.population = new ArrayList<Person>();
-        this.spreadProgressList = new ArrayList<InfectionProgress>();
         this.random = new Random();
         this.timer = new Timer(40, this);
 
@@ -65,7 +64,7 @@ public class Simulation extends JPanel implements ActionListener{
     }
 
     public void stopSimulation() {
-        this.simulationRunning = !this.simulationRunning;
+        this.simulationRunning = false;
         this.timer.stop();
     }
 
@@ -104,17 +103,24 @@ public class Simulation extends JPanel implements ActionListener{
 
     //sprawdzanie warunków zarażenia
     private void spreadDisease() {
-
-        for (int i = 0; i < this.spreadProgressList.size(); i++) {
-            if (!this.spreadProgressList.get(i).updateProgress()) {
-                this.spreadProgressList.remove(i);
+       ArrayList<InfectionProgress> spreadProgressList = InfectedList.getInstance().getInfections();
+        
+        for (int i = 0; i < spreadProgressList.size(); i++) {
+            if (!spreadProgressList.get(i).updateProgress()) {
+                spreadProgressList.remove(i);
             }
         }
 
-        for (int i = 0; i < InfectedList.getInstance().getInfectedList().size(); i++) {
+        ArrayList<Person> infectedList = InfectedList.getInstance().getInfectedList();
+
+        for (int i = 0; i < infectedList.size(); i++) {
             for (int j = 0; j < this.population.size(); j++) {
-                if (j < population.size() && this.population.get(j).getHealth().isInfected() && InfectedList.getInstance().getInfectedList().get(i).getLocation().spreadPossible(this.population.get(j).getLocation())) {
-                    this.spreadProgressList.add(new InfectionProgress(InfectedList.getInstance().getInfectedList().get(i), this.population.get(j)));
+                if (infectedList.get(i).getLocation().spreadPossible(this.population.get(j).getLocation())) {
+                    if (InfectedList.getInstance().containsPPL(infectedList.get(i),this.population.get(j))) {
+                        continue;
+                    } else {
+                        InfectedList.getInstance().getInfections().add(new InfectionProgress(infectedList.get(i), this.population.get(j)));
+                    }
                 }
             }
         }
@@ -162,7 +168,8 @@ public class Simulation extends JPanel implements ActionListener{
         for (Person person : currentPopulation) {
             int x = (int) (person.getLocation().getComponents()[0] * SCALE_FACTOR);
             int y = (int) (person.getLocation().getComponents()[1] * SCALE_FACTOR);
-            g.setColor(person.getHealth().isInfected() ? Color.red : Color.blue);
+            //g.setColor(person.getHealth().isInfected() ? Color.red : Color.blue);
+            g.setColor(person.getHealth().isInfected() ? Color.red : (person.getHealth().isImmune() ? Color.magenta : Color.blue));
             g.fillOval(x, y, 8, 8); // Kropka reprezentująca osobę
         }
     }

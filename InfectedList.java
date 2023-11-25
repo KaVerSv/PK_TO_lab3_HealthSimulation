@@ -6,9 +6,12 @@ public class InfectedList {
 
     //lista wszystkich zarażonych
     private ArrayList<Person> infected;
+    //lista postępujących infekcji
+    private ArrayList<InfectionProgress> infections;
 
     private InfectedList() {
         this.infected = new ArrayList<Person>();
+        this.infections = new ArrayList<InfectionProgress>();
     }
 
     // Metoda do uzyskania instancji singletona
@@ -30,5 +33,18 @@ public class InfectedList {
 
     public ArrayList<Person> getInfectedList() {
         return this.infected;
+    }
+
+    public ArrayList<InfectionProgress> getInfections() {
+        return this.infections;
+    }
+
+    public boolean containsPPL(Person infected, Person healthy) {
+        for (int i = 0; i < infections.size(); i++) {
+            if (infections.get(i).getHealthy() == healthy && infections.get(i).getInfected() == infected) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -102,7 +102,6 @@ public class Person {
     // on true Person leaves Simulation area
     public Boolean move() {
 
-        
         //max przesuniecie na klatkę = 0.1
         // szana na zmianę kierunku
         if (this.rand.nextDouble() < 0.08) {
@@ -128,6 +127,4 @@ public class Person {
         }
         return false;
     }
-
-    
 }
