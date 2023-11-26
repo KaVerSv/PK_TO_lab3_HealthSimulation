@@ -39,6 +39,14 @@ public class InfectedList {
         return this.infections;
     }
 
+    public void setInfections(ArrayList<InfectionProgress> infections) {
+        this.infections = new ArrayList<>(infections);
+    }
+
+    public void setInfectedList(ArrayList<Person> infectedList) {
+        this.infected = new ArrayList<>(infectedList);
+    }
+
     public boolean containsPPL(Person infected, Person healthy) {
         for (int i = 0; i < infections.size(); i++) {
             if (infections.get(i).getHealthy() == healthy && infections.get(i).getInfected() == infected) {

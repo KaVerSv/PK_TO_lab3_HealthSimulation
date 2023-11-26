@@ -1,11 +1,31 @@
-class Memento {
-    private final String state;
+import java.util.ArrayList;
 
-    public Memento(String state) {
-        this.state = state;
+class Memento {
+    private final ArrayList<Person> population;
+    private final ArrayList<InfectionProgress> infections;
+    private final ArrayList<Person> infectedList;
+    private final int step;
+
+    public Memento(ArrayList<Person> population, int step, ArrayList<InfectionProgress> infections, ArrayList<Person> infectedList)  {
+        this.step = step;
+        this.population = new ArrayList<>(population);
+        this.infections = new ArrayList<>(infections);
+        this.infectedList = new ArrayList<>(infectedList);
     }
 
-    public String getState() {
-        return state;
+    public ArrayList<Person> getPopulation() {
+        return new ArrayList<>(population);
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public ArrayList<InfectionProgress> getInfections() {
+        return new ArrayList<>(infections);
+    }
+
+    public ArrayList<Person> getInfectedList() {
+        return new ArrayList<>(infectedList);
     }
 }

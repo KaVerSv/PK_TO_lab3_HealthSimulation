@@ -61,8 +61,21 @@ public class PublicHealthAplication {
                 symulacja.stopSimulation();
             }
         });
-        
 
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                symulacja.addSave();
+            }
+        });
+
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                symulacja.loadSave();
+            }
+        });
+        
         frame.setVisible(true);
     }
 }

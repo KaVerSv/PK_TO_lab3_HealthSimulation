@@ -20,27 +20,20 @@ public class Simulation extends JPanel implements ActionListener{
     private static int step = 0;
     Timer timer;
 
-    private List<Person> population;
+    private ArrayList<Person> population;
+    private CareTaker careTaker;
     
-
     private Random random;
     //szansa na przyrost populacji
     private final double income = 10;
 
-    //działanie symulacji
-    private boolean simulationRunning = false;
-
-    //saving
-    private String content;
-
     //symulacja.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
-    //solving flickering
-    //Graphics bufferGraphics;
 
     Simulation(int populationSize, boolean immune) {
         this.population = new ArrayList<Person>();
         this.random = new Random();
         this.timer = new Timer(40, this);
+        this.careTaker = new CareTaker();
 
         for (int i = 0; i < populationSize; i++) {
             double x = random.nextDouble(width + 1);
@@ -48,14 +41,12 @@ public class Simulation extends JPanel implements ActionListener{
             population.add(new Person(immune, new Vector2D(x, y)));
         }
 
-        this.setPreferredSize(new Dimension(length * SCALE_FACTOR, width * SCALE_FACTOR));
+        this.setPreferredSize(new Dimension(length * SCALE_FACTOR + 50, width * SCALE_FACTOR + 50));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         NextStep();
-        //update(getGraphics());
-        //validate();
         repaint();
     }
 
@@ -64,13 +55,11 @@ public class Simulation extends JPanel implements ActionListener{
     }
 
     public void stopSimulation() {
-        this.simulationRunning = false;
         this.timer.stop();
     }
 
     public void startSimulation() {
         this.timer.start();
-        this.simulationRunning = true;
     }
 
     //krok symulacji
@@ -139,26 +128,30 @@ public class Simulation extends JPanel implements ActionListener{
         return range < income;
     }
 
+    public void addSave() {
+        this.careTaker.saveMemento(save());
+    }
+
+    public void loadSave() {
+        restore(this.careTaker.getLast());
+        repaint();
+    }
+
     //zapis
-    public void write(String content) {
-        this.content = content;
-    }
-
     public Memento save() {
-        return new Memento(content);
+        return new Memento(this.population, step, InfectedList.getInstance().getInfections(), InfectedList.getInstance().getInfectedList());
     }
-
+    
     public void restore(Memento memento) {
-        this.content = memento.getState();
-    }
-
-    public String getContent() {
-        return content;
+        step = memento.getStep();
+        this.population = memento.getPopulation();
+        InfectedList.getInstance().setInfectedList(memento.getInfectedList());
+        InfectedList.getInstance().setInfections(memento.getInfections());
     }
     
     //grafika
     public void update(Graphics g) {
-        paint(g); 
+        paint(g);
     }
 
     @Override
