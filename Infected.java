@@ -15,6 +15,16 @@ public class Infected implements Health{
         this.recoveryTime = recoveryTime;
     }
 
+    Infected(Infected source) {
+        this.symptops = source.symptops;
+        InfectedList.getInstance().addInfected(source.sick);
+        this.sick = source.sick;
+
+        Random random = new Random();
+        int recoveryTime = (random.nextInt(11) + 20) * 25;
+        this.recoveryTime = recoveryTime;
+    }
+
     public void updateRecoveryTime() {
         this.recoveryTime -= 1;
         if (recoveryTime <= 0) {

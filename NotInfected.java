@@ -5,6 +5,10 @@ public class NotInfected implements Health{
         this.immune = immune;
     }
 
+    NotInfected(NotInfected source) {
+        this.immune = source.immune;
+    }
+
     @Override
     public boolean haveSymptoms() {
         return false;

@@ -17,10 +17,15 @@ public class Person {
     }
 
     public Person(Person source) {
-        this.health = source.health;
         this.direction = new Vector2D(source.direction);
         this.rand = new Random();
         this.location = new Vector2D(source.location);
+
+        if (source.health instanceof Infected) {
+            this.health = new Infected((Infected) source.health);
+        } else if (source.health instanceof NotInfected) {
+            this.health = new NotInfected((NotInfected) source.health);
+        }
     }
 
     public Vector2D getLocation() {
@@ -106,7 +111,7 @@ public class Person {
 
         //max przesuniecie na klatkę = 0.1
         // szana na zmianę kierunku
-        if (this.rand.nextInt(100) < 40) {
+        if (this.rand.nextInt(100) < 50) {
             double x = rand.nextDouble() * 0.2 -0.1;
             double y = rand.nextDouble() * 0.2 -0.1;
             this.direction = new Vector2D(x,y);

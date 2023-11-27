@@ -14,9 +14,9 @@ import java.util.List;
 import vectors_custom.Vector2D;
 
 public class Simulation extends JPanel implements ActionListener{
-    public static final int length = 10;
-    public static final int width = 10;
-    private static final int SCALE_FACTOR = 50;  // Współczynnik skalowania
+    public static final int length = 20;
+    public static final int width = 20;
+    private static final int SCALE_FACTOR = 35;  // Współczynnik skalowania
     private int step = 0;
     Timer timer;
 
