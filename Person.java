@@ -5,7 +5,6 @@ public class Person {
     private Health health;
     private Random rand;
     private Vector2D direction;
-    
     private Vector2D location;
 
     public Person(boolean immune, Vector2D location) {
@@ -64,7 +63,7 @@ public class Person {
     }
 
     private boolean getInfection() {
-        double range = this.rand.nextDouble() * 100;
+        double range = this.rand.nextInt(100);
         return range < 10;
     }
 
@@ -74,10 +73,6 @@ public class Person {
 
     public Health setHealth(Health health) {
         return this.health = health;
-    }
-
-    public boolean mapEdge() {
-        return rand.nextBoolean();
     }
 
     public void gainInfection(Person infected) { 
@@ -111,7 +106,7 @@ public class Person {
 
         //max przesuniecie na klatkę = 0.1
         // szana na zmianę kierunku
-        if (this.rand.nextDouble() < 0.08) {
+        if (this.rand.nextInt(100) < 40) {
             double x = rand.nextDouble() * 0.2 -0.1;
             double y = rand.nextDouble() * 0.2 -0.1;
             this.direction = new Vector2D(x,y);
@@ -122,7 +117,7 @@ public class Person {
         
         if (tmp[0] > Simulation.width || tmp[0] < 0 || tmp[1] > Simulation.length || tmp[1] < 0) {
             
-            if (this.rand.nextBoolean()) {
+            if (this.rand.nextInt(100) < 20) {
                 this.location.setComponents(save[0], save[1]);
                 double[] tmp2 = this.direction.getComponents();
                 this.direction.setComponents(-tmp2[0], -tmp2[1]);

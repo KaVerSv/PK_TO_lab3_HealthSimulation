@@ -25,7 +25,7 @@ public class Simulation extends JPanel implements ActionListener{
     
     private Random random;
     //szansa na przyrost populacji
-    private final double income = -1;
+    private final int income = 10;
 
     //symulacja.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
 
@@ -83,13 +83,11 @@ public class Simulation extends JPanel implements ActionListener{
                 iterator.remove();
             }
         }
-
-        /* 
+        
         // przyrost populacji
         if (growPopulation()) {
             this.population.add(new Person());
         }
-        */
     }
 
     //sprawdzanie warunków zarażenia
@@ -126,7 +124,7 @@ public class Simulation extends JPanel implements ActionListener{
 
     //przyrost populacji
     private boolean growPopulation() {
-        int range = this.random.nextInt() * 100;
+        int range = this.random.nextInt(100);
         return range < income;
     }
 
