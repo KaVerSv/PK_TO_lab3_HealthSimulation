@@ -10,6 +10,12 @@ public class InfectionProgress {
         this.healthy = healthy;
     }
 
+    InfectionProgress(InfectionProgress source) {
+        this.spreadTime = source.spreadTime;
+        this.infected = new Person(infected);
+        this.healthy = new Person(healthy);
+    }
+
     //on false remove
     public boolean updateProgress() {
 

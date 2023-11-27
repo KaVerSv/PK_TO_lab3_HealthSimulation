@@ -17,7 +17,7 @@ public class Simulation extends JPanel implements ActionListener{
     public static final int length = 10;
     public static final int width = 10;
     private static final int SCALE_FACTOR = 50;  // Współczynnik skalowania
-    private static int step = 0;
+    private int step = 0;
     Timer timer;
 
     private ArrayList<Person> population;
@@ -25,7 +25,7 @@ public class Simulation extends JPanel implements ActionListener{
     
     private Random random;
     //szansa na przyrost populacji
-    private final double income = 10;
+    private final double income = -1;
 
     //symulacja.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
 
@@ -84,10 +84,12 @@ public class Simulation extends JPanel implements ActionListener{
             }
         }
 
+        /* 
         // przyrost populacji
         if (growPopulation()) {
             this.population.add(new Person());
         }
+        */
     }
 
     //sprawdzanie warunków zarażenia

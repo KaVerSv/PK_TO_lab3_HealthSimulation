@@ -17,6 +17,13 @@ public class Person {
         this.direction = new Vector2D(x,y);
     }
 
+    public Person(Person source) {
+        this.health = source.health;
+        this.direction = new Vector2D(source.direction);
+        this.rand = new Random();
+        this.location = new Vector2D(source.location);
+    }
+
     public Vector2D getLocation() {
         return this.location;
     }
@@ -100,7 +107,7 @@ public class Person {
     }
 
     // on true Person leaves Simulation area
-    public Boolean move() {
+    public boolean move() {
 
         //max przesuniecie na klatkę = 0.1
         // szana na zmianę kierunku

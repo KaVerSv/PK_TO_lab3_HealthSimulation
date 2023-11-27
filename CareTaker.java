@@ -1,8 +1,7 @@
 import java.util.ArrayList;
-import java.util.List;
 
 public class CareTaker {
-    private List<Memento> mementos;
+    private ArrayList<Memento> mementos;
 
     CareTaker() {
         this.mementos = new ArrayList<>();
