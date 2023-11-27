@@ -32,7 +32,11 @@ public class InfectedList {
     }
 
     public ArrayList<Person> getInfectedList() {
-        return this.infected;
+        ArrayList<Person> temp = new ArrayList<>();
+        for (Person person : this.infected) {
+            temp.add(person);
+        }
+        return temp;
     }
 
     public ArrayList<InfectionProgress> getInfections() {

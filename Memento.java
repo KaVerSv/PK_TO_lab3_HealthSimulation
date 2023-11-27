@@ -10,7 +10,10 @@ class Memento {
         this.step = step;
         this.population = deepcopArrayList(population);
         this.infections = deepcopyInfected(infections);
-        this.infectedList = deepcopArrayList(infectedList);
+        this.infectedList = new ArrayList<>();
+        for (Person element : infectedList) {
+            this.infectedList.add(new Person(element));
+        }
     }
 
     public ArrayList<Person> getPopulation() {
@@ -38,7 +41,9 @@ class Memento {
         return nowaLista;
     }
 
-        private ArrayList<InfectionProgress> deepcopyInfected(ArrayList<InfectionProgress> oryginalnaLista) {
+
+
+    private ArrayList<InfectionProgress> deepcopyInfected(ArrayList<InfectionProgress> oryginalnaLista) {
         ArrayList<InfectionProgress> nowaLista = new ArrayList<>();
         
         for (InfectionProgress element : oryginalnaLista) {

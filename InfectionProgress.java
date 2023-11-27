@@ -12,12 +12,15 @@ public class InfectionProgress {
 
     InfectionProgress(InfectionProgress source) {
         this.spreadTime = source.spreadTime;
-        this.infected = new Person(infected);
-        this.healthy = new Person(healthy);
+        this.infected = new Person(source.infected);
+        this.healthy = new Person(source.healthy);
     }
 
     //on false remove
     public boolean updateProgress() {
+        if (this.healthy == null || this.infected == null) {
+            return false;
+        }
 
         if (this.healthy.getLocation().spreadPossible(infected.getLocation()) && infected.getHealth().isInfected()) {
             spreadTime -= 1;

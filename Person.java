@@ -76,8 +76,8 @@ public class Person {
         return this.health;
     }
 
-    public Health setHealth(Health health) {
-        return this.health = health;
+    public void setHealth(Health health) {
+        this.health = health;
     }
 
     public void gainInfection(Person infected) { 

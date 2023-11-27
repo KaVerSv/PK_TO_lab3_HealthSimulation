@@ -25,9 +25,7 @@ public class Simulation extends JPanel implements ActionListener{
     
     private Random random;
     //szansa na przyrost populacji
-    private final int income = 10;
-
-    //symulacja.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
+    private final int income = 15;
 
     Simulation(int populationSize, boolean immune) {
         this.population = new ArrayList<Person>();
@@ -92,11 +90,12 @@ public class Simulation extends JPanel implements ActionListener{
 
     //sprawdzanie warunków zarażenia
     private void spreadDisease() {
-       ArrayList<InfectionProgress> spreadProgressList = InfectedList.getInstance().getInfections();
-        
-        for (int i = 0; i < spreadProgressList.size(); i++) {
-            if (!spreadProgressList.get(i).updateProgress()) {
-                spreadProgressList.remove(i);
+       Iterator<InfectionProgress> spreadProgressList = InfectedList.getInstance().getInfections().iterator();
+
+        while (spreadProgressList.hasNext()) {
+            InfectionProgress infection = spreadProgressList.next();
+            if (!infection.updateProgress()) {
+                spreadProgressList.remove();
             }
         }
 
@@ -138,7 +137,7 @@ public class Simulation extends JPanel implements ActionListener{
     }
 
     //zapis
-    public Memento save() {
+    public Memento save() {  
         return new Memento(this.population, step, InfectedList.getInstance().getInfections(), InfectedList.getInstance().getInfectedList());
     }
     
@@ -161,8 +160,7 @@ public class Simulation extends JPanel implements ActionListener{
         for (Person person : currentPopulation) {
             int x = (int) (person.getLocation().getComponents()[0] * SCALE_FACTOR);
             int y = (int) (person.getLocation().getComponents()[1] * SCALE_FACTOR);
-            //g.setColor(person.getHealth().isInfected() ? Color.red : Color.blue);
-            g.setColor(person.getHealth().isInfected() ? Color.red : (person.getHealth().isImmune() ? Color.magenta : Color.blue));
+            g.setColor(person.getHealth().isInfected() ? Color.red : (person.getHealth().isImmune() ? Color.GREEN : Color.blue));
             g.fillOval(x, y, 8, 8); // Kropka reprezentująca osobę
         }
     }
