@@ -10,10 +10,10 @@ public class PublicHealthAplication {
     public static void main(String[] args) {
         
         //parametry symulacji
-        int population = 80;
-        boolean immune = false;
+        int population = 100;
+        int immunePercentage = 0;
         InfectedList.getInstance();
-        Simulation symulacja = new Simulation(population, immune);
+        Simulation symulacja = new Simulation(population, immunePercentage);
 
         //
         //parametry gui

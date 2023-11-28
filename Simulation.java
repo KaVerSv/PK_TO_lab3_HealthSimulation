@@ -16,7 +16,7 @@ import vectors_custom.Vector2D;
 public class Simulation extends JPanel implements ActionListener{
     public static final int length = 20;
     public static final int width = 20;
-    private static final int SCALE_FACTOR = 35;  // Współczynnik skalowania
+    private static final int SCALE_FACTOR = 30;  // Współczynnik skalowania
     private int step = 0;
     Timer timer;
 
@@ -25,21 +25,27 @@ public class Simulation extends JPanel implements ActionListener{
     
     private Random random;
     //szansa na przyrost populacji
-    private final int income = 15;
+    private final int income = 20;
 
-    Simulation(int populationSize, boolean immune) {
+    Simulation(int populationSize, int immunePercentage) {
         this.population = new ArrayList<Person>();
         this.random = new Random();
         this.timer = new Timer(40, this);
         this.careTaker = new CareTaker();
 
         for (int i = 0; i < populationSize; i++) {
-            double x = random.nextDouble(width + 1);
-            double y = random.nextDouble(length + 1);
+            double x = random.nextDouble(width);
+            double y = random.nextDouble(length);
+            boolean immune;
+            if (this.random.nextInt(100) < immunePercentage) {
+                immune = true;
+            } else {
+                immune = false;
+            }
             population.add(new Person(immune, new Vector2D(x, y)));
         }
 
-        this.setPreferredSize(new Dimension(length * SCALE_FACTOR + 50, width * SCALE_FACTOR + 50));
+        this.setPreferredSize(new Dimension(length * SCALE_FACTOR + 20, width * SCALE_FACTOR + 20));
     }
 
     @Override
